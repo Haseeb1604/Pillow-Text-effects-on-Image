@@ -5,12 +5,12 @@ from pathlib import Path, PosixPath
 from typing import Tuple, List, Dict
 from urllib.request import urlopen
 
-from moviepy.editor import (
-    CompositeVideoClip,
-    ImageClip,
-    TextClip,
-    VideoFileClip,
-)
+# from moviepy.editor import (
+#     CompositeVideoClip,
+#     ImageClip,
+#     TextClip,
+#     VideoFileClip,
+# )
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
@@ -51,18 +51,18 @@ def get_y_and_heights(
     return y, line_heights
 
 
-def draw_underlined_text(draw, pos, text, font, **options):
-    width, height = draw.textsize(text, font=font)
+def draw_underlined_text(draw, pos, text, font, align, **options):
+    _, _, width, height = draw.textbbox((0,0), text, font=font)
     lx, ly = pos[0], pos[1] + height
-    draw.text(pos, text, font=font, **options)
+    draw.text(pos, text, font=font, align=align, **options)
     draw.line((lx, ly, lx + width, ly), **options)
 
 
-def draw_shadow_effect(bg, pos, text: str, font, fill):
+def draw_shadow_effect(bg, pos, text: str, font, fill, align):
     # Create piece of canvas to draw text on and blur
     blurred = Image.new("RGBA", bg.size)
     draw = ImageDraw.Draw(blurred)
-    draw.text(xy=pos, text=text, fill=fill, font=font)
+    draw.text(xy=pos, text=text, fill=fill, font=font, align=align)
     blurred = blurred.filter(ImageFilter.BoxBlur(15))
 
     # Paste soft text onto background
@@ -70,11 +70,12 @@ def draw_shadow_effect(bg, pos, text: str, font, fill):
 
     # Draw on sharp text
     draw = ImageDraw.Draw(bg)
-    draw.text(xy=pos, text=text, fill=fill, font=font)
+    draw.text(xy=pos, text=text, fill=fill, font=font, align=align)
 
 
-def draw_strikethrough_text(draw, pos, text, font, **options):
-    width, text_height = draw.textsize(text, font=font)
+def draw_strikethrough_text(draw, pos, text, font, align, **options):
+    # width, text_height = draw.textsize(text, font=font) # Depreciated | Removed from latest version
+    _, _, width, text_height = draw.textbbox((0,0), text, font=font) 
 
     # Calculate the baseline and height of the text
     ascent, descent = font.getmetrics()
@@ -84,11 +85,10 @@ def draw_strikethrough_text(draw, pos, text, font, **options):
     line_thickness = 2  # Adjust the thickness of the strikethrough line as needed
     ly = baseline + (line_thickness // 2)
 
-    draw.text(pos, text, font=font, **options)
+    draw.text(pos, text, font=font, align=align, **options)
     draw.line((pos[0], ly, pos[0] + width, ly), **options)
 
-
-def overlay_text() -> TextClip:
+def overlay_text():
     """
     Overlay static text on the video clip.
 
@@ -99,6 +99,12 @@ def overlay_text() -> TextClip:
     Returns:
         VideoFileClip: Video clip with overlaid text.
     """
+
+    img = Image.open("./picture.jpg")
+
+    font = ImageFont.truetype("./Calibri/calibrib.ttf", 100)
+
+    width, height  = img.size
     
     v_margin = 5
 
@@ -110,20 +116,32 @@ def overlay_text() -> TextClip:
     # of each line of text
     y, line_heights = get_y_and_heights(text_lines, (width, height), v_margin, font)
 
+    underline = True
+    strikethrough = False
+    shadow_effect = True
+    text_color  = "white"
+    align = "right"
+
     # Draw each line of text
     for i, line in enumerate(text_lines):
         line_mask = font.getmask(line)
         if line_mask:
             line_width = line_mask.getbbox()[2]
-            x = (width - line_width) // 2
+
+            if align == "left":
+                x = 10  # Set your left margin value here
+            elif align == "right":
+                x = (width - line_width) - 10  # Adjust for any additional margin you want
+            else:
+                x = (width - line_width) // 2  # Center alignment
 
             if underline:
                 draw_underlined_text(
-                    draw_interface, pos=(x, y), text=line, font=font, fill=text_color
+                    draw_interface, pos=(x, y), text=line, font=font, fill=text_color, align=align
                 )
             elif strikethrough:
                 draw_strikethrough_text(
-                    draw_interface, pos=(x, y), text=line, font=font, fill=text_color
+                    draw_interface, pos=(x, y), text=line, font=font, fill=text_color, align=align
                 )
             elif shadow_effect:
                 draw_shadow_effect(
@@ -132,10 +150,13 @@ def overlay_text() -> TextClip:
                     text=line,
                     font=font,
                     fill=text_color,
+                    align=align
                 )
             else:
-                draw_interface.text((x, y), line, font=font, fill=text_color,align="left")
+                draw_interface.text((x, y), line, font=font, fill=text_color, align=align)
             y += line_heights[i]
 
     # Save the resulting image
     img.save("text.png")
+
+overlay_text()
