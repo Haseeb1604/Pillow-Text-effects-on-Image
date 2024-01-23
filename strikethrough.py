@@ -24,11 +24,11 @@ def get_y_and_heights(
     # Get the descent value of the font to consider the space below the baseline
     _, descent = font.getmetrics()
 
-    # Initialize an empty list to store the height of each line
+    # Empty list to store the height of each line
     line_heights = []
 
     for text_line in text_wrapped:
-        # Get the mask for the current line of text
+        # mask of current line of text
         text_mask = font.getmask(text_line)
 
         # If the mask exists, calculate the height including descent and margin
