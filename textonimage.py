@@ -30,19 +30,6 @@ draw.text(
     message, font=font, fill="White", align='right', anchor="mm"
     )
 
-# blurred = Image.new('RGBA', img.size)
-# draw = ImageDraw.Draw(blurred)
-# xdrop = 0
-# ydrop = -10
-# blurRatio = 10
-# draw.text(xy=(W/2 - xdrop, H/2 - ydrop), text=message, fill='white', font=font, anchor='mm')
-# blurred = blurred.filter(ImageFilter.BoxBlur(blurRatio))
-
-# img.paste(blurred, blurred)
-
-# draw = ImageDraw.Draw(img)
-# draw.text(xy=(W/2, H/2), text=message, fill='black', font=font, anchor='mm')
-
 # ------------------------------------------------------------------------------------
 
 # text = "Your underlineable text \n New Line Text"
