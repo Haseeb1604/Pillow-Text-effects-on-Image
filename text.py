@@ -102,19 +102,38 @@ def overlay_text():
 
     img = Image.open("./picture.jpg")
 
-    font = ImageFont.truetype("./Calibri/calibrib.ttf", 100)
+    # font = ImageFont.truetype("./Calibri/calibrib.ttf", 100)
 
-    width, height  = img.size
+    width, height  = 466, 1056
     
-    v_margin = 5
+    v_margin = 10
 
     img = Image.new("RGBA", (width, height), (255, 255, 255, 0))
     draw_interface = ImageDraw.Draw(img)
 
-    text_lines = ["add", "some" , "text"]
-    # Get the first vertical coordinate at which to draw text and the height
-    # of each line of text
-    y, line_heights = get_y_and_heights(text_lines, (width, height), v_margin, font)
+    font_size = 50
+
+    while True:
+        font = ImageFont.truetype("./Calibri/calibrib.ttf", font_size)
+        text_lines = ["1fadk", "2dflkjda", "3lkajdlskf", "4dfkjdk", "5dfdkjlds", "6dfsjdl",
+                      "7fadk", "8dflkjda", "9dflkajdlskf", "10dfkjdk", "11dfdkjlds", "12dfsjdl",
+                      "13fadk", "14dflkjda", "15dflkajdlskf", "16dfkjdk", "17dfdkjlds", "18dfsjdl",
+                      ]
+
+        # Get the first vertical coordinate at which to draw text and the height of each line of text
+        y, line_heights = get_y_and_heights(text_lines, (width, height), v_margin, font)
+
+        # print("v_margin : ", v_margin)
+        # print("font_size : ", font_size)
+        # Check if the text fits within the specified dimensions
+        if sum(line_heights) < height:
+            break
+        
+        if v_margin != 0:
+            v_margin -= 2
+        else:
+            font_size -=5
+    # y, line_heights = get_y_and_heights(text_lines, (width, height), v_margin, font)
 
     underline = True
     strikethrough = False
@@ -122,6 +141,7 @@ def overlay_text():
     text_color  = "white"
     align = "right"
 
+    margin = 50
     # Draw each line of text
     for i, line in enumerate(text_lines):
         line_mask = font.getmask(line)
@@ -129,9 +149,9 @@ def overlay_text():
             line_width = line_mask.getbbox()[2]
 
             if align == "left":
-                x = 10  # Set your left margin value here
+                x = margin  # Set your left margin value here
             elif align == "right":
-                x = (width - line_width) - 10  # Adjust for any additional margin you want
+                x = (width - line_width) - margin  # Adjust for any additional margin you want
             else:
                 x = (width - line_width) // 2  # Center alignment
 
