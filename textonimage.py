@@ -8,28 +8,27 @@ img = Image.open("./picture.jpg")
 #     draw.line((0, img.size[0], img.size[1], 0), fill=color, width=width)
 #     return img
 
-# draw = ImageDraw.Draw(img)
+draw = ImageDraw.Draw(img)
 
-# font = ImageFont.truetype("./Calibri/calibrib.ttf", 100)
+font = ImageFont.truetype("./Calibri/calibrib.ttf", 100)
 
-# W, H  = img.size
+W, H  = img.size
 
-# message = "Hello There!\nText on Image"
+message = "Hello There!\nText on Image"
 
-# w, h = draw.textbbox((0, 0), message, font=font)
+w, h = draw.textbbox((0, 0), message, font=font)
 
-# print(W, H)
-# print(w, h)
+print(W, H)
+print(w, h)
 
-
-# topleft = (100, 100)
-# bottomright = (250, 250)
-# draw.arc((W/2-350, H/2-350, W/2 + 350, H/2 + 350), 90, 270, fill="red", width=20)
-# draw.rectangle(topleft, bottomright, outline="red", width=2)
-# draw.text(
-#     (W/2, H/2), 
-#     message, font=font, fill="White", align='right', anchor="mm"
-#     )
+topleft = (100, 100)
+bottomright = (250, 250)
+draw.arc((W/2-350, H/2-350, W/2 + 350, H/2 + 350), 90, 270, fill="red", width=20)
+draw.rectangle(topleft, bottomright, outline="red", width=2)
+draw.text(
+    (W/2, H/2), 
+    message, font=font, fill="White", align='right', anchor="mm"
+    )
 
 # blurred = Image.new('RGBA', img.size)
 # draw = ImageDraw.Draw(blurred)
